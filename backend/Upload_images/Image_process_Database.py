@@ -1,14 +1,12 @@
 import os
 import json
-import torch
 import re
+import torch
 import cloudinary
 import cloudinary.uploader
-import numpy as np
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from transformers import CLIPProcessor, CLIPModel
-import base64
 from google import genai
 from PIL import Image
 
@@ -64,6 +62,7 @@ Given an image of a product, return only a JSON object with the following fields
 - color (as a color name, not code)
 - brand (if visible, else "unknown")
 - target_audience ("Men", "Women", "kids", "Unisex")
+- price (If you can found else "unknown")
 
 Return ONLY valid JSON. No markdown, no explanation.
         """
@@ -88,7 +87,9 @@ Return ONLY valid JSON. No markdown, no explanation.
             "category": "unknown",
             "tags": [],
             "color": "unknown",
-            "brand": "unknown"
+            "brand": "unknown",
+            "target_audience": "unknown",
+            "price": "unknown"
         }
 
 def upload_image_to_cloudinary(image_path):
@@ -136,6 +137,8 @@ def process_all_images():
                 "tags": meta["tags"],
                 "brand": meta["brand"],
                 "color": meta["color"],
+                "price": meta["price"],
+                "target_audience": meta["target_audience"],
                 "image_url": image_url,
                 "embedding": embedding
             }

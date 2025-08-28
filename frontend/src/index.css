@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Animated gradient effect */
+.animated-gradient {
+  background-size: 200% 200%;
+  background-position: left;
+  transition: background-position 0.5s;
+}
+.animated-gradient-hover:hover {
+  background-position: right;
+  transition: background-position 0.5s;
+}
+
+/* Continuous animated gradient for text */
+@keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-move 2s linear infinite;
+}

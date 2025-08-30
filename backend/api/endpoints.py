@@ -1,6 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, status
 from http import HTTPStatus
-import os
 import utility.file_handler as fh
 import utility.Mongo_database as similar_image
 import utility.CLIP_utils as embd

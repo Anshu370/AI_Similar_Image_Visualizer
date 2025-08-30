@@ -14,6 +14,6 @@ app.add_middleware(
 )
 app.include_router(endpoints.router)
 
-@app.post('/')
+@app.get('/')
 def main():
-    return {"message": "Image_Visulaizer"}
+    return {"message": " AI Similar Image Visualizer"}

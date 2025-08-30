@@ -1,22 +1,63 @@
 from pymongo import MongoClient
-from bson import ObjectId
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-import os
+import config
 
-client = MongoClient(os.getenv("MONGO_URI", "mongodb://localhost:27017/"))
-db = client["visual_product_matcher"]
-collection = db["products"]
+client = MongoClient(config.MongoURI)
+db = client[config.MONGO_DB]
+collection = db[config.MONGO_COLLECTION]
 
-def get_similar_products(query_embedding, threshold=0.5):
-    products = list(collection.find({}, {"_id": 1, "embedding": 1}))
+async def get_similar_products(query_embedding):
+
+    # Fetch relevant fields from all documents
+    products = list(collection.find({}, {
+        "_id": 1,
+        "embedding": 1,
+        "name": 1,
+        "category": 1,
+        "image_url": 1,
+        "tags": 1,
+        "target_audience":1,
+        "brand":1
+    }))
+
+    # Prepare data
     ids = [str(p["_id"]) for p in products]
     embeddings = np.array([p["embedding"] for p in products])
-    similarities = cosine_similarity([query_embedding], embeddings)[0]
-    results = []
-    for i, score in enumerate(similarities):
-        if score >= threshold:
-            results.append({"id": ids[i], "similarity": round(float(score), 2)})
-    results.sort(key=lambda x: x["similarity"], reverse=True)
-    return results
 
+    # Cosine similarity
+    similarities = cosine_similarity([query_embedding], embeddings)[0]
+
+    results = []
+    brand_set = set()
+
+    for i, score in enumerate(similarities):
+        score_float = round(float(score), 2)
+
+        # Add product with full details
+        results.append({
+            "id": ids[i],
+            "similarity": score_float,
+            "name": products[i].get("name", "Unknown"),
+            "category": products[i].get("category", "Unknown"),
+            "image_url": products[i].get("image_url", ""),
+            "tags": products[i].get("tags", []),
+            "target_audience": products[i].get("target_audience", "unisex"),
+            "brand": products[i].get("brand", "unknown")
+        })
+
+        # Collect tags for frontend filtering if similarity >= 0.5
+        if score_float >= 0.7:
+            brand = products[i].get("brand", "")
+            if isinstance(brand, str):
+                brand = brand.strip().lower()
+                if brand and brand != "unknown":
+                    brand_set.add(brand)
+
+    # Sort products by similarity descending
+    results.sort(key=lambda x: x["similarity"], reverse=True)
+
+    return {
+        "similar_products": results,
+        "filter_brand": list(brand_set)
+    }

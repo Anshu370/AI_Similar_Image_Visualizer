@@ -5,7 +5,6 @@ import utility.Mongo_database as similar_image
 import utility.CLIP_utils as embd
 import utility.Gemini_utils as gemini
 
-
 router = APIRouter()
 
 ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"]
@@ -23,7 +22,7 @@ async def match_image(image: UploadFile = File(...)):
 
     try:
         metadata = await gemini.extract_metadata_with_gemini(PIL_image)
-        embedding = await embd.get_clip_embedding(PIL_image)
+        embedding = await embd.get_clip_embedding_from_service(image)
         cosine_similarity_report = await similar_image.get_similar_products(embedding)
 
         return {

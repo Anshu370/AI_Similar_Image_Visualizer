@@ -1,13 +1,9 @@
-import os
 import json
 import re
 from google import genai
+from config import GEMINI_KEY
 
-api_key = os.getenv("GEMINI_API_KEY")
-
-# ✅ Initialize Gemini client
-client = genai.Client(api_key=api_key)
-
+client = genai.Client(api_key=GEMINI_KEY)
 
 async def extract_metadata_with_gemini(image):
     try:

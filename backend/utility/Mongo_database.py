@@ -6,7 +6,7 @@ client = MongoClient(config.MongoURI)
 db = client[config.MONGO_DB]
 collection = db[config.MONGO_COLLECTION]
 
-# Custom Cosine
+# Custom Cosine Similarity (Sklearn uses high memory at a time of hosting)
 def cosine_similarity(query_embedding, embeddings):
     query = np.array(query_embedding)
     embeddings = np.array(embeddings)
@@ -29,8 +29,8 @@ async def get_similar_products(query_embedding):
         "category": 1,
         "image_url": 1,
         "tags": 1,
-        "target_audience":1,
-        "brand":1
+        "target_audience": 1,
+        "brand": 1
     }))
 
     # Prepare data

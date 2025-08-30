@@ -1,18 +1,20 @@
-from fastapi import FastAPI, UploadFile, File
-from transformers import CLIPProcessor, CLIPModel
-from PIL import Image
-import torch
+from fastapi import FastAPI, status, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+import endpoints as endpoints
 
 app = FastAPI()
 
-clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.post("/embed")
-async def get_embedding(image: UploadFile = File(...)):
-    img = Image.open(image.file).convert("RGB")
-    inputs = clip_processor(images=img, return_tensors="pt")
-    with torch.no_grad():
-        embedding = clip_model.get_image_features(**inputs)
-        embedding = embedding / embedding.norm(p=2, dim=-1)
-    return {"embedding": embedding.squeeze().tolist()}
+app.include_router(endpoints.router)
+
+@app.post('/')
+def main():
+    return {"message": "Image_Visulaizer MicroService"}

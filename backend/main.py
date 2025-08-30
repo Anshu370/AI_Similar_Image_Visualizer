@@ -1,4 +1,4 @@
-from fastapi import FastAPI, status, UploadFile
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import api.endpoints as endpoints

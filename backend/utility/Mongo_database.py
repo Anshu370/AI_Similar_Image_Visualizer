@@ -1,11 +1,23 @@
 from pymongo import MongoClient
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
 import config
 
 client = MongoClient(config.MongoURI)
 db = client[config.MONGO_DB]
 collection = db[config.MONGO_COLLECTION]
+
+# Custom Cosine
+def cosine_similarity(query_embedding, embeddings):
+    query = np.array(query_embedding)
+    embeddings = np.array(embeddings)
+
+    query_norm = np.linalg.norm(query)
+    embeddings_norm = np.linalg.norm(embeddings, axis=1)
+
+    dot_products = embeddings @ query
+    similarities = dot_products / (embeddings_norm * query_norm)
+
+    return similarities.tolist()
 
 async def get_similar_products(query_embedding):
 
@@ -26,7 +38,7 @@ async def get_similar_products(query_embedding):
     embeddings = np.array([p["embedding"] for p in products])
 
     # Cosine similarity
-    similarities = cosine_similarity([query_embedding], embeddings)[0]
+    similarities = cosine_similarity(query_embedding, embeddings)
 
     results = []
     brand_set = set()

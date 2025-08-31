@@ -4,6 +4,22 @@ This project is an **AI-powered image similarity matching system** with an integ
 
 ---
 
+## 🚀 Features
+
+- **FastAPI backend with lightweight and scalable architecture**
+- **Image similarity matching using OpenAI’s CLIP (ViT-B/32)**
+- **Custom cosine similarity function (no sklearn or FAISS dependency)**
+- **Automated metadata extraction using Google Gemini API**
+- **Support for image upload via both file and URL**
+- **MongoDB integration to store image metadata and embeddings**
+- **React frontend with drag-and-drop upload and real-time results**
+- **Support for multiple product categories (Electronics, Bags, Chips, etc.)**
+- **CORS-enabled for full-stack integration (works seamlessly with React frontend)**
+- **Docker-ready setup for portable deployment**
+
+
+---
+
 ## 🛠️ Tech Stack
 
 ### Backend
@@ -114,7 +130,78 @@ The system currently supports and stores images from the following categories:
 └── README.md
 ```
 
+---
 
+## 📦 Installation (Frontend)
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/Anshu370/AI_Similar_Image_Visualizer
+cd AI_Similar_Image_Visualizer/frontend
+```
+
+### 2. Frontend Setup
+
+```bash
+npm install
+npm run dev
+```
+
+## 📦 Installation (Backend)
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/Anshu370/AI_Similar_Image_Visualizer
+cd AI_Similar_Image_Visualizer/backend
+```
+
+### 2. Install dependencies
+
+```bash
+pip install torch==2.7.1+cpu --index-url https://download.pytorch.org/whl/cpu
+pip install -r requirements.txt
+```
+
+---
+
+## 🧪 Run the API locally
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+---
+
+## 🧵 API Usage (Test with Postman)
+
+### 🔗 `POST /api/match`
+
+**Form-Data** (Key = `image`, Value = image file)
+
+**Response**
+
+```json
+{
+  "status_code": 200,
+  "Image metadata": {
+    "metadata": {
+      "category": "shoes",
+      "color": "black",
+      "brand": "nike"
+    },
+    "embedding": [0.123, 0.512, ...]  // 512D vector
+  },
+  "Result": {
+    "Content": [
+      { "id": "6123...", "similarity": 0.92, "name": "...", "brand": "...", "category": "...", "image": "url" }
+    ],
+    "Filter_brand": ["nike", "puma"]
+  },
+  "message": "Image processed and metadata extracted successfully"
+}
+```
 
 ---
 

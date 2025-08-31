@@ -70,19 +70,47 @@ The system currently supports and stores images from the following categories:
 
 ## 📦 Project Structure
 
-📁 AI_Similar_Image_Visualizer
+📁 AI_Similar_Image_Visualize
 │
 ├── 📁 backend
-│ ├── main.py
-│ ├── api/endpoints.py
-│ └── utility/
-│ ├── CLIP_utils.py
-│ ├── Gemini_utils.py
-│ ├── Mongo_database.py
-│ └── file_handler.py
+│    ├── main.py
+│    ├── api/
+|    |   └── endpoints.py
+│    └── utility/
+│        ├── CLIP_utils.py
+│        ├── Gemini_utils.py
+│        ├── Mongo_database.py
+│        └── file_handler.py
 │
 ├── 📁 frontend
-│ └── (React components)
+│    ├── src/
+│    |   ├── components/
+│    |   |    ├── Filters.tsx
+│    |   |    ├── Footer.tsx
+│    |   |    ├── Header.tsx
+│    |   |    ├── QueryImage.tsx
+│    |   |    ├── Results.tsx
+│    |   |    └── UploadSection.tsx
+│    |   ├── services/
+│    |   |    └── api.ts
+│    |   ├── types/
+│    |   |    └── index.ts
+│    |   ├── App.tsx
+│    |   ├── index.css
+│    |   ├── main.tsx
+│    |   └── vite-env.d.ts
+│    ├── .env
+│    ├── .gitignore
+│    ├── eslint.config.js
+│    ├── index.html
+│    ├── package-lock.json
+│    ├── package.json
+│    ├── postcss.config.js
+|    ├── tailwind.config.js
+|    ├── tsconfig.app.json
+|    ├── tsconfig.json
+|    ├── tsconfig.node.json
+|    └── file_handler.py
 │
 ├── requirements.txt
 └── README.md

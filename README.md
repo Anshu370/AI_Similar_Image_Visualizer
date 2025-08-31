@@ -15,8 +15,6 @@ This project is an **AI-powered image similarity matching system** with an integ
 - **React frontend with drag-and-drop upload and real-time results**
 - **Support for multiple product categories (Electronics, Bags, Chips, etc.)**
 - **CORS-enabled for full-stack integration (works seamlessly with React frontend)**
-- **Docker-ready setup for portable deployment**
-
 
 ---
 

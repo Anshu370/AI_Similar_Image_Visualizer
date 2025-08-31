@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, Heart, ShoppingCart, Star } from 'lucide-react';
+import { ExternalLink, Heart, Star } from 'lucide-react';
 import { Product } from '../types';
 
 interface ResultsProps {
@@ -121,18 +121,6 @@ const Results: React.FC<ResultsProps> = ({
                   {Math.round(product.similarity * 100)}% match
                 </span>
               </div>
-
-              {/* Overlay Actions */}
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                <div className="flex space-x-3">
-                  <button className="p-2 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow">
-                    <Heart className="h-5 w-5 text-gray-700" />
-                  </button>
-                  <button className="p-2 bg-purple-500 text-white rounded-full shadow-lg hover:shadow-xl hover:bg-purple-600 transition-all">
-                    <ShoppingCart className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
             </div>
 
             {/* Product Info */}
@@ -184,16 +172,6 @@ const Results: React.FC<ResultsProps> = ({
                 <span className="text-sm text-gray-600">
                   {Math.round(product.similarity * 100)}% similarity
                 </span>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex space-x-2 mt-4">
-                <button className="flex-1 bg-gradient-to-r from-purple-500 to-blue-600 text-white py-2 px-4 rounded-xl hover:from-purple-600 hover:to-blue-700 transition-all duration-200 text-sm font-medium">
-                  View Details
-                </button>
-                <button className="px-4 py-2 border-2 border-gray-200 text-gray-600 rounded-xl hover:border-purple-500 hover:text-purple-600 transition-all duration-200">
-                  <Heart className="h-4 w-4" />
-                </button>
               </div>
             </div>
           </div>

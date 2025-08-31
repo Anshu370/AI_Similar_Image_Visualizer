@@ -203,6 +203,36 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ---
 
+## .env.example for Backend (FastAPI + MongoDB + Google Gemini)
+
+```bash
+# MongoDB Configuration
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/
+MONGO_DB=your_database_name
+MONGO_COLLECTION=your_collection_name
+
+# Google Gemini API Key
+GOOGLE_API_KEY=your_google_gemini_api_key
+
+# Host and Port
+HOST=0.0.0.0
+PORT=8000
+
+# (Optional) CORS Configuration
+ALLOWED_ORIGINS=http://localhost:5173
+
+
+```
+
+## .env.example for Frontend (React + Vite)
+
+```bash
+# React App Configuration
+VITE_API_BASE_URL=http://localhost:8000/api
+
+```
+
+---
 
 ## 🚀 Future Improvements
 

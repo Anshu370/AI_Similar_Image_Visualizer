@@ -1,16 +1,15 @@
-import requests
-from fastapi import UploadFile
-from config import Embed_url
-async def get_clip_embedding_from_service(image_file: UploadFile) -> list:
-    # Reset file pointer to start
-    image_file.file.seek(0)
+from PIL import Image
+from transformers import CLIPProcessor, CLIPModel
+import torch
 
-    response = requests.post(
-        f"{Embed_url}/embed",  # Replace with actual URL
-        files={
-            "image": (image_file.filename, image_file.file, image_file.content_type)
-        }
-    )
 
-    response.raise_for_status()  # Raise an exception for HTTP error responses
-    return response.json()["embedding"]
+clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+
+
+async def get_clip_embedding(image: Image.Image):
+    inputs = clip_processor(images=image, return_tensors="pt")
+    with torch.no_grad():
+        embedding = clip_model.get_image_features(**inputs)
+        embedding = embedding / embedding.norm(p=2, dim=-1)
+    return embedding.squeeze().tolist()

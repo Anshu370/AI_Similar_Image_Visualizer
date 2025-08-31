@@ -22,7 +22,7 @@ async def match_image(image: UploadFile = File(...)):
 
     try:
         metadata = await gemini.extract_metadata_with_gemini(PIL_image)
-        embedding = await embd.get_clip_embedding_from_service(image)
+        embedding = await embd.get_clip_embedding(PIL_image)
         cosine_similarity_report = await similar_image.get_similar_products(embedding)
 
         return {

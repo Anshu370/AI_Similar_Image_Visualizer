@@ -211,6 +211,11 @@ MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/
 MONGO_DB=your_database_name
 MONGO_COLLECTION=your_collection_name
 
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
 # Google Gemini API Key
 GOOGLE_API_KEY=your_google_gemini_api_key
 
@@ -232,6 +237,15 @@ VITE_API_BASE_URL=http://localhost:8000/api
 
 ```
 
+---
+
+## 📤 To Add Images to Cloudinary and Metadata to MongoDB
+
+Run the following command to upload all images from your local folder to Cloudinary, generate metadata using Google Gemini API, and store everything (including embeddings) in MongoDB:
+
+```bash
+python Upload_images/Image_process_Database.py
+```
 ---
 
 ## 🚀 Future Improvements

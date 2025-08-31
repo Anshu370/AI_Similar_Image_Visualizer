@@ -155,7 +155,18 @@ git clone https://github.com/Anshu370/AI_Similar_Image_Visualizer
 cd AI_Similar_Image_Visualizer/backend
 ```
 
-### 2. Install dependencies
+### 2. Create and activate virtual environment
+```bash
+# For Windows
+python -m venv venv
+venv\Scripts\activate
+
+# For macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install dependencies
 
 ```bash
 pip install torch==2.7.1+cpu --index-url https://download.pytorch.org/whl/cpu

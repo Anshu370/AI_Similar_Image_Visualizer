@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, Heart, ShoppingCart } from 'lucide-react';
+import { ExternalLink, Heart, ShoppingCart, Star } from 'lucide-react';
 import { Product } from '../types';
 
 interface ResultsProps {
@@ -7,19 +7,29 @@ interface ResultsProps {
   loading: boolean;
   searchQuery: string;
   similarityThreshold: number;
+  selectedBrands: string[];
 }
 
-const Results: React.FC<ResultsProps> = ({ products, loading, searchQuery, similarityThreshold }) => {
+const Results: React.FC<ResultsProps> = ({ 
+  products, 
+  loading, 
+  searchQuery, 
+  similarityThreshold,
+  selectedBrands 
+}) => {
   // Filter products based on search query and similarity threshold
   const filteredProducts = products.filter(product => {
     const matchesSearch = searchQuery === '' || 
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase());
+      product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    const matchesSimilarity = product.similarity >= similarityThreshold;
+    const matchesSimilarity = (product.similarity * 100) >= similarityThreshold;
     
-    return matchesSearch && matchesSimilarity;
+    const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(product.brand.toLowerCase());
+    
+    return matchesSearch && matchesSimilarity && matchesBrand;
   });
 
   if (loading) {
@@ -31,10 +41,7 @@ const Results: React.FC<ResultsProps> = ({ products, loading, searchQuery, simil
             <div className="p-6 space-y-3">
               <div className="h-4 bg-gray-200 rounded" />
               <div className="h-4 bg-gray-200 rounded w-2/3" />
-              <div className="flex justify-between items-center">
-                <div className="h-6 bg-gray-200 rounded w-20" />
-                <div className="h-8 bg-gray-200 rounded w-16" />
-              </div>
+              <div className="h-6 bg-gray-200 rounded w-20" />
             </div>
           </div>
         ))}
@@ -93,7 +100,7 @@ const Results: React.FC<ResultsProps> = ({ products, loading, searchQuery, simil
             {/* Product Image */}
             <div className="relative overflow-hidden">
               <img
-                src={product.image}
+                src={product.image_url}
                 alt={product.name}
                 className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => {
@@ -105,13 +112,13 @@ const Results: React.FC<ResultsProps> = ({ products, loading, searchQuery, simil
               {/* Similarity Badge */}
               <div className="absolute top-4 right-4">
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  product.similarity >= 90 
+                  (product.similarity * 100) >= 90 
                     ? 'bg-green-500 text-white' 
-                    : product.similarity >= 70 
+                    : (product.similarity * 100) >= 70 
                     ? 'bg-yellow-500 text-white' 
                     : 'bg-gray-500 text-white'
                 }`}>
-                  {product.similarity}% match
+                  {Math.round(product.similarity * 100)}% match
                 </span>
               </div>
 
@@ -141,10 +148,41 @@ const Results: React.FC<ResultsProps> = ({ products, loading, searchQuery, simil
 
               <p className="text-sm text-gray-500 mb-3">{product.brand}</p>
 
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-bold text-gray-900">{product.price}</span>
+              <div className="flex items-center justify-between mb-3">
                 <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
                   {product.category}
+                </span>
+                <span className="px-2 py-1 bg-blue-100 text-blue-600 text-xs rounded-full">
+                  {product.target_audience}
+                </span>
+              </div>
+
+              {/* Tags */}
+              {product.tags && Array.isArray(product.tags) && product.tags.length > 0 && (
+                <div className="mb-4">
+                  <div className="flex flex-wrap gap-1">
+                    {product.tags.slice(0, 3).map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {product.tags.length > 3 && (
+                      <span className="px-2 py-1 bg-gray-100 text-gray-500 text-xs rounded-full">
+                        +{product.tags.length - 3} more
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Similarity Score */}
+              <div className="flex items-center mb-4">
+                <Star className="h-4 w-4 text-yellow-500 mr-1" />
+                <span className="text-sm text-gray-600">
+                  {Math.round(product.similarity * 100)}% similarity
                 </span>
               </div>
 

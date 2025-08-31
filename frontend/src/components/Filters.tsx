@@ -1,14 +1,20 @@
 import React from 'react';
-import { Sliders, Filter } from 'lucide-react';
+import { Sliders, Filter, Check } from 'lucide-react';
 
 interface FiltersProps {
   similarity: number;
   onSimilarityChange: (value: number) => void;
+  availableBrands: string[];
+  selectedBrands: string[];
+  onBrandFilter: (brand: string) => void;
 }
 
 const Filters: React.FC<FiltersProps> = ({ 
   similarity, 
   onSimilarityChange, 
+  availableBrands,
+  selectedBrands,
+  onBrandFilter,
 }) => {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
@@ -20,6 +26,8 @@ const Filters: React.FC<FiltersProps> = ({
         <button
           onClick={() => {
             onSimilarityChange(70);
+            // Reset brand filters
+            selectedBrands.forEach(brand => onBrandFilter(brand));
           }}
           className="text-sm text-purple-600 hover:text-purple-700 transition-colors"
         >
@@ -61,6 +69,44 @@ const Filters: React.FC<FiltersProps> = ({
             Higher values show more exact matches
           </p>
         </div>
+
+        {/* Brand Filters */}
+        {availableBrands.length > 0 && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Filter by Brand
+            </label>
+            <div className="space-y-2 max-h-40 overflow-y-auto">
+              {availableBrands.map((brand) => (
+                <label
+                  key={brand}
+                  className="flex items-center space-x-3 cursor-pointer group"
+                >
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={selectedBrands.includes(brand)}
+                      onChange={() => onBrandFilter(brand)}
+                      className="sr-only"
+                    />
+                    <div className={`w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                      selectedBrands.includes(brand)
+                        ? 'bg-purple-500 border-purple-500'
+                        : 'border-gray-300 group-hover:border-purple-400'
+                    }`}>
+                      {selectedBrands.includes(brand) && (
+                        <Check className="h-3 w-3 text-white" />
+                      )}
+                    </div>
+                  </div>
+                  <span className="text-sm text-gray-700 capitalize group-hover:text-purple-600 transition-colors">
+                    {brand}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Quick Filters */}
         <div>

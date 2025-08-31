@@ -5,9 +5,10 @@ import { UploadData } from '../types';
 interface UploadSectionProps {
   onUpload: (data: UploadData) => void;
   loading: boolean;
+  error: string | null;
 }
 
-const UploadSection: React.FC<UploadSectionProps> = ({ onUpload, loading }) => {
+const UploadSection: React.FC<UploadSectionProps> = ({ onUpload, loading, error }) => {
   const [dragActive, setDragActive] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('file');
@@ -144,6 +145,12 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onUpload, loading }) => {
         </div>
 
         {/* Upload Area */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6 relative z-10">
+            <p className="text-red-600 text-center">{error}</p>
+          </div>
+        )}
+        
         <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden relative z-10">
           {uploadMethod === 'file' ? (
             <div

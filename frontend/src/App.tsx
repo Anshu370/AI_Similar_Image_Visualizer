@@ -5,65 +5,8 @@ import UploadSection from './components/UploadSection';
 import QueryImage from './components/QueryImage';
 import Filters from './components/Filters';
 import Results from './components/Results';
-import { UploadData, Product } from './types';
-
-// Mock data for demonstration
-const mockProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Modern Wireless Headphones',
-    image: 'https://images.pexels.com/photos/3587478/pexels-photo-3587478.jpeg?auto=compress&cs=tinysrgb&w=400',
-    price: '$299.99',
-    similarity: 95,
-    brand: 'AudioTech',
-    category: 'Electronics'
-  },
-  {
-    id: '2',
-    name: 'Premium Bluetooth Speaker',
-    image: 'https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg?auto=compress&cs=tinysrgb&w=400',
-    price: '$199.99',
-    similarity: 87,
-    brand: 'SoundWave',
-    category: 'Electronics'
-  },
-  {
-    id: '3',
-    name: 'Studio Monitor Speakers',
-    image: 'https://images.pexels.com/photos/164854/pexels-photo-164854.jpeg?auto=compress&cs=tinysrgb&w=400',
-    price: '$449.99',
-    similarity: 82,
-    brand: 'ProAudio',
-    category: 'Electronics'
-  },
-  {
-    id: '4',
-    name: 'Noise Canceling Earbuds',
-    image: 'https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg?auto=compress&cs=tinysrgb&w=400',
-    price: '$179.99',
-    similarity: 78,
-    brand: 'TechSound',
-    category: 'Electronics'
-  },
-  {
-    id: '5',
-    name: 'Gaming Headset Pro',
-    image: 'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&cs=tinysrgb&w=400',
-    price: '$349.99',
-    similarity: 75,
-    brand: 'GameAudio',
-    category: 'Gaming'
-  },
-  {
-    id: '6',
-    name: 'Vintage Radio Speaker',
-    image: 'https://images.pexels.com/photos/1841841/pexels-photo-1841841.jpeg?auto=compress&cs=tinysrgb&w=400',
-    price: '$129.99',
-    similarity: 65,
-    brand: 'RetroSound',
-    category: 'Vintage'
-  }
-];
+import { UploadData, Product, ImageMetadata, ApiResponse } from './types';
+import { uploadImageForMatching } from './services/api';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<'upload' | 'results'>('upload');
@@ -71,28 +14,59 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [similarity, setSimilarity] = useState(70);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
+  const [availableBrands, setAvailableBrands] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const handleUpload = async (data: UploadData) => {
     setLoading(true);
+    setError(null);
     setUploadData(data);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setLoading(false);
-    setCurrentScreen('results');
+    try {
+      const response: ApiResponse = await uploadImageForMatching(data.data);
+      
+      if (response.status_code === 200) {
+        setImageMetadata(response["Image metadata"].metadata);
+        setProducts(response.Result.Content);
+        setAvailableBrands(response.Result.Filter_brand);
+        setSelectedBrands([]); // Reset brand filters
+        setCurrentScreen('results');
+      } else {
+        throw new Error('Failed to process image');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Upload error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleNewSearch = () => {
     setCurrentScreen('upload');
     setUploadData(null);
+    setImageMetadata(null);
+    setProducts([]);
+    setAvailableBrands([]);
+    setSelectedBrands([]);
     setSearchQuery('');
     setSimilarity(70);
+    setError(null);
   };
 
+  const handleBrandFilter = (brand: string) => {
+    setSelectedBrands(prev => 
+      prev.includes(brand) 
+        ? prev.filter(b => b !== brand)
+        : [...prev, brand]
+    );
+  };
 
   if (currentScreen === 'upload') {
-    return <UploadSection onUpload={handleUpload} loading={loading} />;
+    return <UploadSection onUpload={handleUpload} loading={loading} error={error} />;
   }
 
   return (
@@ -106,6 +80,7 @@ function App() {
             {uploadData && (
               <QueryImage 
                 imageUrl={uploadData.preview} 
+                metadata={imageMetadata}
                 onNewSearch={handleNewSearch}
               />
             )}
@@ -116,13 +91,17 @@ function App() {
             <Filters
               similarity={similarity}
               onSimilarityChange={setSimilarity}
+              availableBrands={availableBrands}
+              selectedBrands={selectedBrands}
+              onBrandFilter={handleBrandFilter}
             />
             
             <Results
-              products={mockProducts}
-              loading={false}
+              products={products}
+              loading={loading}
               searchQuery={searchQuery}
               similarityThreshold={similarity}
+              selectedBrands={selectedBrands}
             />
           </div>
         </div>
